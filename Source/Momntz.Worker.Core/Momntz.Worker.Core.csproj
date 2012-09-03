@@ -111,12 +111,6 @@
     <Compile Include="QueueService.cs" />
     <Compile Include="WorkerRegistry.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Momntz\Momntz.csproj">
-      <Project>{77CC17DF-C471-42BF-B5F6-D55EAF918891}</Project>
-      <Name>Momntz</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
