@@ -50,6 +50,13 @@ namespace Momntz.Worker.Core.Implementations.Media.MediaTypes
             return null;
         }
 
+        /// <summary>
+        /// Saves the specified momento id.
+        /// </summary>
+        /// <param name="momentoId">The momento id.</param>
+        /// <param name="name">The name.</param>
+        /// <param name="mediaType">Type of the media.</param>
+        /// <param name="image">The image.</param>
         private void Save(int momentoId, string name, MediaType mediaType, MediaItem image)
         {
 
@@ -67,6 +74,10 @@ namespace Momntz.Worker.Core.Implementations.Media.MediaTypes
         }
 
 
+        /// <summary>
+        /// Processes the specified message.
+        /// </summary>
+        /// <param name="message">The message.</param>
         public void Process(MediaItem message)
         {
             ImageFormat format = GetFormat(message.Extension);
@@ -98,6 +109,7 @@ namespace Momntz.Worker.Core.Implementations.Media.MediaTypes
             if (maxWidth < int.MaxValue && maxHeight < int.MaxValue)
             {
                 bytes = message.Bytes.ResizeToMax(new Size(maxWidth, maxHeight), format);
+
             }
 
             string type = message.Extension.TrimStart('.');
