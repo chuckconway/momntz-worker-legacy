@@ -103,6 +103,7 @@
     <Compile Include="Implementations\Media\MediaTypes\DocumentProcessor.cs" />
     <Compile Include="Implementations\Media\MediaTypes\ImageProcessor.cs" />
     <Compile Include="Implementations\Media\MediaProcessor.cs" />
+    <Compile Include="Implementations\Media\MediaTypes\Image\ExifData.cs" />
     <Compile Include="Implementations\Media\MediaTypes\IMediaTypes.cs" />
     <Compile Include="Implementations\Media\MediaTypes\Media.cs" />
     <Compile Include="Implementations\Media\MediaTypes\MediaBase.cs" />

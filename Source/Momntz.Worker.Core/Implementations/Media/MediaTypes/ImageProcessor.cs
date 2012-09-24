@@ -10,6 +10,7 @@ using System.Linq;
 using Hypersonic;
 using Momntz.Model;
 using Momntz.Model.Configuration;
+using Momntz.Worker.Core.Implementations.Media.MediaTypes.Image;
 
 namespace Momntz.Worker.Core.Implementations.Media.MediaTypes
 {
@@ -116,6 +117,16 @@ namespace Momntz.Worker.Core.Implementations.Media.MediaTypes
             string name = string.Format("{0}_{1}{2}", Path.GetFileNameWithoutExtension(message.Filename), DateTime.Now.Ticks, message.Extension);
 
             AddToStorage("img", "image", name, type, bytes ?? message.Bytes);
+
+            if (mediaType == MediaType.OriginalImage)
+            {
+                //Reset to default db
+                _session.Database.ConnectionString = null;
+                _session.Database.CommandType = CommandType.StoredProcedure;
+                ExifData imageMetadata = new ExifData(_session.Database);
+                imageMetadata.ExtractExifSave(new MemoryStream(message.Bytes), momentoId);
+            }
+
             Save(momentoId, name, mediaType, message);
         }
 
