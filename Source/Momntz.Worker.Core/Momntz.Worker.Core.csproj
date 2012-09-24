@@ -81,6 +81,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Dependencies\WindowsAzure\Microsoft.WindowsAzure.StorageClient.dll</HintPath>
     </Reference>
+    <Reference Include="Momntz, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dependencies\Momntz\Momntz.dll</HintPath>
+    </Reference>
     <Reference Include="StructureMap">
       <HintPath>..\..\Dependencies\StructureMap\StructureMap.dll</HintPath>
     </Reference>
