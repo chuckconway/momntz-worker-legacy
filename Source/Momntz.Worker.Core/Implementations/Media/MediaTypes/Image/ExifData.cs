@@ -52,7 +52,7 @@ namespace Momntz.Worker.Core.Implementations.Media.MediaTypes.Image
                             dataRow["MomentoId"] = momentoId;
                             dataRow["Key"] = propertyItem.Id.ToString("x");
                             dataRow["Type"] = propertyItem.Type;
-                            dataRow["Value"] = value;
+                            dataRow["Value"] = string.IsNullOrWhiteSpace(value) ? string.Empty : value;
                             table.Rows.Add(dataRow);
                         }
 
