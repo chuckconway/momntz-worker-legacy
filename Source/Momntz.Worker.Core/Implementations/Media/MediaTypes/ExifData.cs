@@ -1,32 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.Common;
-using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Hypersonic;
+using Momntz.Model;
+using NHibernate;
 
-
-namespace Momntz.Worker.Core.Implementations.Media.MediaTypes.Image
+namespace Momntz.Worker.Core.Implementations.Media.MediaTypes
 {
     public class ExifData
     {
-        private readonly IDatabase _database;
+        private readonly ISession _session;
 
-        public ExifData(IDatabase database)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ExifData"/> class.
+        /// </summary>
+        /// <param name="session">The session.</param>
+        public ExifData(ISession session)
         {
-            _database = database;
+            _session = session;
         }
 
         /// <summary>
         /// Extracts the exif save.
         /// </summary>
         /// <param name="stream">The stream.</param>
-        /// <param name="mediaId">The media id.</param>
-        public  DateTime ExtractExifSave(Stream stream, int momentoId)
+        /// <param name="momento">The momento.</param>
+        /// <returns>DateTime.</returns>
+        public  DateTime ExtractExifSave(Stream stream, Momento momento)
         {
             DateTime date = DateTime.MinValue;
 
@@ -37,7 +39,7 @@ namespace Momntz.Worker.Core.Implementations.Media.MediaTypes.Image
 
                 if (items.Length > 0)
                 {
-                    DataTable table = GetTable();
+                    var exifs = new List<Exif>();
 
                     foreach (PropertyItem propertyItem in items)
                     {
@@ -48,29 +50,43 @@ namespace Momntz.Worker.Core.Implementations.Media.MediaTypes.Image
 
                         if (!ignore.Contains(id))
                         {
-                            DataRow dataRow = table.NewRow();
-                            dataRow["MomentoId"] = momentoId;
-                            dataRow["Key"] = propertyItem.Id.ToString("x");
-                            dataRow["Type"] = propertyItem.Type;
-                            dataRow["Value"] = string.IsNullOrWhiteSpace(value) ? string.Empty : value;
-                            table.Rows.Add(dataRow);
+                            var exif = new Exif
+                                {
+                                    Momento = momento,
+                                    Key = propertyItem.Id.ToString("x"),
+                                    Type = propertyItem.Type,
+                                    Value = string.IsNullOrWhiteSpace(value) ? string.Empty : value
+                                };
+
+                            exifs.Add(exif);
                         }
 
                         date = GetDate(id, value, date);
                     }
 
-                    try
-                    {
-                        _database.NonQuery("[dbo].[Exif_InsertExif]", new { ExifCollection = table });
-                    }
-                    catch //This needs to be logged... TODO:Log this! Maybe we can tap into ELMAH
-                    {
+                        SaveExifs(exifs);
 
-                    }
                 }
             }
 
             return date;
+        }
+
+        /// <summary>
+        /// Saves the exifs.
+        /// </summary>
+        /// <param name="exifs">The exifs.</param>
+        private void SaveExifs(IEnumerable<Exif> exifs)
+        {
+            using (var trans = _session.BeginTransaction())
+            {
+                foreach (var exif in exifs)
+                {
+                    _session.Save(exif);
+                }
+
+                trans.Commit();
+            }
         }
 
         /// <summary>
@@ -95,20 +111,6 @@ namespace Momntz.Worker.Core.Implementations.Media.MediaTypes.Image
                 }
             }
             return date;
-        }
-
-        /// <summary>
-        /// Gets the table.
-        /// </summary>
-        /// <returns></returns>
-        private static DataTable GetTable()
-        {
-            DataTable table = new DataTable();
-            table.Columns.Add("MomentoId", typeof(int));
-            table.Columns.Add("Key", typeof(string));
-            table.Columns.Add("Type", typeof(int));
-            table.Columns.Add("Value", typeof(string));
-            return table;
         }
 
         /// <summary>

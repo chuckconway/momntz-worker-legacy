@@ -1,60 +1,88 @@
-﻿using System.Data;
-using System.Linq;
+﻿using System.Linq;
 using System.Collections.Generic;
-using System.Web.Script.Serialization;
 using Chucksoft.Storage;
-using Hypersonic;
+
+using Momntz.Core;
 using Momntz.Model.Configuration;
 using Momntz.Model.Core;
 using Momntz.Worker.Core.Implementations.Media.MediaTypes;
+using Newtonsoft.Json;
 
 namespace Momntz.Worker.Core.Implementations.Media
 {
     public class MediaProcessor : IMessageProcessor
     {
-        private readonly ISession _session;
+        private readonly IDatabaseConfiguration _databaseConfiguration;
         private readonly IStorage _storage;
         private readonly ISettings _settings;
 
-        public MediaProcessor(ISession session, IStorage storage, ISettings settings)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MediaProcessor"/> class.
+        /// </summary>
+        /// <param name="databaseConfiguration">The database configuration.</param>
+        /// <param name="storage">The storage.</param>
+        /// <param name="settings">The settings.</param>
+        public MediaProcessor(IDatabaseConfiguration databaseConfiguration, IStorage storage, ISettings settings)
         {
-            _session = session;
+            _databaseConfiguration = databaseConfiguration;
             _storage = storage;
             _settings = settings;
         }
-         
+
+        /// <summary>
+        /// Gets the type of the message.
+        /// </summary>
+        /// <value>The type of the message.</value>
         public string MessageType
         {
             get { return typeof (MediaMessage).FullName; }
         }
 
+        /// <summary>
+        /// Processes the specified message.
+        /// </summary>
+        /// <param name="message">The message.</param>
         public void Process(string message)
         {
-            JavaScriptSerializer serializer = new JavaScriptSerializer();
-            MediaMessage msg = serializer.Deserialize<MediaMessage>(message);
+            var msg = JsonConvert.DeserializeObject<MediaMessage>(message);
 
             var list = GetMediaTypes();
             var single = list.Single(m => m.Media == msg.MediaType);
 
-            _session.Database.ConnectionString = _settings.QueueDatabase;
-            _session.Database.CommandType = CommandType.Text;
-            
-            var item = _session.Query<MediaItem>("Media")
-                .Where(i => i.Id == msg.Id)
-                .Single();
+            var media = ReteiveMedia(msg);
 
-            _session.Database.ConnectionString = null;
+            single.Process(media);
+        }
 
-            single.Process(item);
+        /// <summary>
+        /// Reteives the media.
+        /// </summary>
+        /// <param name="msg">The MSG.</param>
+        /// <returns>Model.QueueData.Media.</returns>
+        private Model.QueueData.Media ReteiveMedia(MediaMessage msg)
+        {
+            Model.QueueData.Media media;
+
+            using (var session = _databaseConfiguration.CreateSessionFactory(_settings.QueueDatabase).OpenSession())
+            using (var tran = session.BeginTransaction())
+            {
+                media = session.QueryOver<Model.QueueData.Media>()
+                               .Where(x => x.Id == msg.Id)
+                               .SingleOrDefault();
+
+                tran.Commit();
+            }
+
+            return media;
         }
 
         private IEnumerable<IMedia> GetMediaTypes()
         {
             return new List<IMedia>
                        {
-                           new DocumentProcessor(_storage, _session),
-                           new ImageProcessor(_storage, _settings, _session),
-                           new VideoProcessor(_storage, _session)
+                           new DocumentProcessor(_storage, _databaseConfiguration),
+                           new ImageProcessor(_storage, _settings, _databaseConfiguration),
+                           new VideoProcessor(_storage, _databaseConfiguration)
                        };
         }
     }

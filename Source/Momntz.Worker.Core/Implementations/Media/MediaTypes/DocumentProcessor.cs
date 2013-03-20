@@ -1,6 +1,6 @@
 ﻿using System;
 using Chucksoft.Storage;
-using Hypersonic;
+using Momntz.Core;
 
 
 namespace Momntz.Worker.Core.Implementations.Media.MediaTypes
@@ -8,20 +8,34 @@ namespace Momntz.Worker.Core.Implementations.Media.MediaTypes
     public class DocumentProcessor : IMedia
     {
         private readonly IStorage _storage;
-        private readonly ISession _session;
+        private readonly IDatabaseConfiguration _databaseConfiguration;
 
-        public DocumentProcessor(IStorage storage, ISession session)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DocumentProcessor"/> class.
+        /// </summary>
+        /// <param name="storage">The storage.</param>
+        /// <param name="databaseConfiguration">The database configuration.</param>
+        public DocumentProcessor(IStorage storage, IDatabaseConfiguration databaseConfiguration)
         {
             _storage = storage;
-            _session = session;
+            _databaseConfiguration = databaseConfiguration;
         }
 
+        /// <summary>
+        /// Gets the media.
+        /// </summary>
+        /// <value>The media.</value>
         public string Media
         {
             get { return "Document"; }
         }
 
-        public void Process(MediaItem message)
+        /// <summary>
+        /// Processes the specified message.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        /// <exception cref="System.NotImplementedException"></exception>
+        public void Process(Model.QueueData.Media message)
         {
             throw new NotImplementedException();
         }

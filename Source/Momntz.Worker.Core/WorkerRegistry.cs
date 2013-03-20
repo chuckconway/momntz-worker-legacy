@@ -1,9 +1,9 @@
 ﻿using Chucksoft.Core.Services;
 using Chucksoft.Storage;
-using Hypersonic;
-using Hypersonic.Session;
+using Momntz.Core;
 using Momntz.Infrastructure;
 using Momntz.Model.Configuration;
+using NHibernate;
 using StructureMap.Configuration.DSL;
 
 namespace Momntz.Worker.Core
@@ -12,7 +12,8 @@ namespace Momntz.Worker.Core
     {
         public WorkerRegistry()
         {
-            For<ISession>().Use(SessionFactory.SqlServer());
+            For<IDatabaseConfiguration>().Use(new DatabaseConfiguration());
+            For<ISession>().Use(new DatabaseConfiguration().CreateSessionFactory().OpenSession());
             For<IStorage>().Use<AzureStorage>();
             For<IConfigurationService>().Use<MomntzConfiguration>();
             For<ISettings>().Use<Settings>();

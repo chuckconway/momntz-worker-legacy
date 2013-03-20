@@ -72,8 +72,9 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Hypersonic">
-      <HintPath>..\..\Dependencies\Hypersonic\Hypersonic.dll</HintPath>
+    <Reference Include="Hypersonic, Version=3.0.0.21, Culture=neutral, PublicKeyToken=6379ba783759c281, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dependencies\Momntz\Hypersonic.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.WindowsAzure.StorageClient, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

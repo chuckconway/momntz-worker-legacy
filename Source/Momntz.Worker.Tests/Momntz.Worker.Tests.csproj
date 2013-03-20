@@ -66,14 +66,17 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Chucksoft.Core">
-      <HintPath>..\..\Dependencies\Chucksoft\Chucksoft.Core.dll</HintPath>
+    <Reference Include="Chucksoft.Core, Version=3.1.0.1, Culture=neutral, PublicKeyToken=3480c36974861ddd, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dependencies\Momntz\Chucksoft.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Chucksoft.Storage">
-      <HintPath>..\..\Dependencies\Chucksoft\Chucksoft.Storage.dll</HintPath>
+    <Reference Include="Chucksoft.Storage, Version=3.1.0.1, Culture=neutral, PublicKeyToken=cdb97f0d2bac2de7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dependencies\Momntz\Chucksoft.Storage.dll</HintPath>
     </Reference>
-    <Reference Include="Hypersonic">
-      <HintPath>..\..\Dependencies\Hypersonic\Hypersonic.dll</HintPath>
+    <Reference Include="Hypersonic, Version=3.0.0.21, Culture=neutral, PublicKeyToken=6379ba783759c281, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dependencies\Momntz\Hypersonic.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\..\Dependencies\nUnit\nunit.framework.dll</HintPath>
@@ -101,7 +104,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

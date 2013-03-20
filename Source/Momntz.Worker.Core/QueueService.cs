@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Hypersonic;
+
+using Momntz.Core;
 using Momntz.Data.Commands.Queue;
 using Momntz.Infrastructure;
 using Momntz.Model.Configuration;
+using Momntz.Model.QueueData;
 using Momntz.Worker.Core.Implementations;
 
 namespace Momntz.Worker.Core
@@ -13,51 +15,64 @@ namespace Momntz.Worker.Core
     {
         private IList<IMessageProcessor> _processors;
         private ISettings _settings;
-        private ISession _session;
+        private IDatabaseConfiguration _databaseConfiguration;
 
+        /// <summary>
+        /// Processes this instance.
+        /// </summary>
         public void Process()
         {
             IInjection injection = new StructureMapInjection();
             injection.AddManifest(new WorkerRegistry());
             injection.AddManifest(new MomntzRegistry());
-            _session = injection.Get<ISession>();
+            _databaseConfiguration = injection.Get<IDatabaseConfiguration>();
             _settings = injection.Get<ISettings>();
-
+            HibernatingRhinos.Profiler.Appender.NHibernate.NHibernateProfiler.Initialize();
             var list = RetreiveQueuedItems();
             ProcessQueuedItems(list, injection);
         }
 
+        /// <summary>
+        /// Retreives the queued items.
+        /// </summary>
+        /// <returns>IEnumerable{Queue}.</returns>
         private IEnumerable<Queue> RetreiveQueuedItems()
         {
-            _session.Database.ConnectionString = _settings.QueueDatabase;
-            var list = _session.Query<Queue>()
-                .Where("MessageStatus = 'Queued'")
-                .List();
+            IList<Queue> queues;
 
-            //Reset to the Momntz Database
-            _session.Database.ConnectionString = null;
+            using (var session = _databaseConfiguration.CreateSessionFactory(_settings.QueueDatabase).OpenSession())
+            using (var tran = session.BeginTransaction())
+            {
+               queues = session.QueryOver<Queue>()
+                       .Where(x => x.MessageStatus == MessageStatus.Queued)
+                       .List();
 
-            return list;
+                tran.Commit();
+            }
+
+            return queues;
         }
 
-        public void UpdateQueue(Queue item, MessageStatus status)
+        /// <summary>
+        /// Updates the queue.
+        /// </summary>
+        /// <param name="item">The item.</param>
+        public void UpdateQueue(Queue item)
         {
-            _session.Database.ConnectionString = _settings.QueueDatabase;
-            _session.SaveAnonymous<Queue>(new { MessageStatus = status }, q => q.Id == item.Id);
+            using (var session = _databaseConfiguration.CreateSessionFactory(_settings.QueueDatabase).OpenSession())
+            using (var tran = session.BeginTransaction())
+            {
+                session.Save(item);
 
-            //Reset to original Database
-            _session.Database.ConnectionString = null;
+                tran.Commit();
+            }
         }
 
-        public void AddError(string error, Queue item)
-        {
-            _session.Database.ConnectionString = _settings.QueueDatabase;
-            _session.SaveAnonymous<Queue>(new { MessageStatus = MessageStatus.Error, Error = error }, q => q.Id == item.Id);
-
-            //Reset to original Database
-            _session.Database.ConnectionString = null;
-        }
-
+        /// <summary>
+        /// Processes the queued items.
+        /// </summary>
+        /// <param name="items">The items.</param>
+        /// <param name="injection">The injection.</param>
         private void ProcessQueuedItems(IEnumerable<Queue> items, IInjection injection)
         {
             var messages = _processors ?? GetMessageProcessors(injection);
@@ -68,20 +83,32 @@ namespace Momntz.Worker.Core
                 {
                     try
                     {
-                        UpdateQueue(queue, MessageStatus.Processing);
+                        queue.MessageStatus = MessageStatus.Processing;
+                        UpdateQueue(queue);
+
                         message.Process(queue.Payload);
-                        UpdateQueue(queue, MessageStatus.Completed);
+
+                        queue.MessageStatus = MessageStatus.Completed;
+                        UpdateQueue(queue);
                     }
                     catch (Exception ex)
                     {
                         string error = String.Format("Message:{0}, StackTrace:{1}", ex.Message, ex.StackTrace);
-                        AddError(error, queue);
+
+                        queue.MessageStatus = MessageStatus.Error;
+                        queue.Error = error;
+                        UpdateQueue(queue);
                     }
                     break;
                 }
             }
         }
 
+        /// <summary>
+        /// Gets the message processors.
+        /// </summary>
+        /// <param name="injection">The injection.</param>
+        /// <returns>List{IMessageProcessor}.</returns>
         private List<IMessageProcessor> GetMessageProcessors(IInjection injection)
         {
             var types = GetType().Assembly.GetTypes();

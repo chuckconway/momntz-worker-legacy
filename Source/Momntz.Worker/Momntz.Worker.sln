@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Momntz.Worker.Core", "..\Mo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Momntz.Worker.Tests", "..\Momntz.Worker.Tests\Momntz.Worker.Tests.csproj", "{38DECA10-5091-4A6F-935C-ADF65C3EF8FD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Momntz", "..\..\..\Momntz\Source\Momntz\Momntz.csproj", "{77CC17DF-C471-42BF-B5F6-D55EAF918891}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -67,6 +69,18 @@ Global
 		{38DECA10-5091-4A6F-935C-ADF65C3EF8FD}.QA|Any CPU.Build.0 = QA|Any CPU
 		{38DECA10-5091-4A6F-935C-ADF65C3EF8FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{38DECA10-5091-4A6F-935C-ADF65C3EF8FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77CC17DF-C471-42BF-B5F6-D55EAF918891}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77CC17DF-C471-42BF-B5F6-D55EAF918891}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77CC17DF-C471-42BF-B5F6-D55EAF918891}.DEV|Any CPU.ActiveCfg = DEV|Any CPU
+		{77CC17DF-C471-42BF-B5F6-D55EAF918891}.DEV|Any CPU.Build.0 = DEV|Any CPU
+		{77CC17DF-C471-42BF-B5F6-D55EAF918891}.PREVIEW|Any CPU.ActiveCfg = PREVIEW|Any CPU
+		{77CC17DF-C471-42BF-B5F6-D55EAF918891}.PREVIEW|Any CPU.Build.0 = PREVIEW|Any CPU
+		{77CC17DF-C471-42BF-B5F6-D55EAF918891}.PROD|Any CPU.ActiveCfg = PROD|Any CPU
+		{77CC17DF-C471-42BF-B5F6-D55EAF918891}.PROD|Any CPU.Build.0 = PROD|Any CPU
+		{77CC17DF-C471-42BF-B5F6-D55EAF918891}.QA|Any CPU.ActiveCfg = QA|Any CPU
+		{77CC17DF-C471-42BF-B5F6-D55EAF918891}.QA|Any CPU.Build.0 = QA|Any CPU
+		{77CC17DF-C471-42BF-B5F6-D55EAF918891}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77CC17DF-C471-42BF-B5F6-D55EAF918891}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
