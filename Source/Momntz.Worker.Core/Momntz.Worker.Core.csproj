@@ -71,19 +71,27 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Dependencies\Chucksoft\Chucksoft.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Chucksoft.Storage">
-      <HintPath>..\..\Dependencies\Chucksoft\Chucksoft.Storage.dll</HintPath>
-    </Reference>
-    <Reference Include="Hypersonic">
-      <HintPath>..\..\Dependencies\Hypersonic\Hypersonic.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.WindowsAzure.StorageClient, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="Chucksoft.Storage, Version=3.1.0.1, Culture=neutral, PublicKeyToken=cdb97f0d2bac2de7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Dependencies\WindowsAzure\Microsoft.WindowsAzure.StorageClient.dll</HintPath>
+      <HintPath>..\..\Dependencies\Momntz\Chucksoft.Storage.dll</HintPath>
     </Reference>
-    <Reference Include="Momntz, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="FluentNHibernate, Version=1.3.0.0, Culture=neutral, PublicKeyToken=8aa435e3cb308880, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Dependencies\Momntz\Momntz.dll</HintPath>
+      <HintPath>..\..\..\Momntz\Dependencies\nHibernate\FluentNHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="HibernatingRhinos.Profiler.Appender.v4.0">
+      <HintPath>..\..\..\Momntz\Dependencies\HibernatingRhinos\HibernatingRhinos.Profiler.Appender.v4.0.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAzure.StorageClient, Version=1.7.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dependencies\Momntz\Microsoft.WindowsAzure.StorageClient.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\Dependencies\JSON.Net\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate, Version=3.3.1.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Momntz\Dependencies\nHibernate\NHibernate.dll</HintPath>
     </Reference>
     <Reference Include="StructureMap">
       <HintPath>..\..\Dependencies\StructureMap\StructureMap.dll</HintPath>
@@ -103,7 +111,7 @@
     <Compile Include="Implementations\Media\MediaTypes\DocumentProcessor.cs" />
     <Compile Include="Implementations\Media\MediaTypes\ImageProcessor.cs" />
     <Compile Include="Implementations\Media\MediaProcessor.cs" />
-    <Compile Include="Implementations\Media\MediaTypes\Image\ExifData.cs" />
+    <Compile Include="Implementations\Media\MediaTypes\ExifData.cs" />
     <Compile Include="Implementations\Media\MediaTypes\IMediaTypes.cs" />
     <Compile Include="Implementations\Media\MediaTypes\Media.cs" />
     <Compile Include="Implementations\Media\MediaTypes\MediaBase.cs" />
@@ -112,10 +120,16 @@
     <Compile Include="Implementations\Email\EmailMessage.cs" />
     <Compile Include="Implementations\Email\EmailProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Queue.cs" />
     <Compile Include="QueueService.cs" />
     <Compile Include="WorkerRegistry.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Momntz\Source\Momntz\Momntz.csproj">
+      <Project>{77cc17df-c471-42bf-b5f6-d55eaf918891}</Project>
+      <Name>Momntz</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

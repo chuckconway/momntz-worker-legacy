@@ -2,8 +2,16 @@
 {
     public interface IMedia
     {
+        /// <summary>
+        /// Gets the media.
+        /// </summary>
+        /// <value>The media.</value>
         string Media { get; }
 
-        void Process(MediaItem message);
+        /// <summary>
+        /// Processes the specified message.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        void Process(Momntz.Model.QueueData.Media message);
     }
 }

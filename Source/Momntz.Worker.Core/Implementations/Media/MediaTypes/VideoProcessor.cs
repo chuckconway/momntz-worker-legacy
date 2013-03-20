@@ -1,5 +1,6 @@
 ﻿using Chucksoft.Storage;
-using Hypersonic;
+using Momntz.Core;
+using NHibernate;
 
 
 namespace Momntz.Worker.Core.Implementations.Media.MediaTypes
@@ -7,12 +8,16 @@ namespace Momntz.Worker.Core.Implementations.Media.MediaTypes
     public class VideoProcessor : IMedia
     {
         private readonly IStorage _storage;
-        private readonly ISession _session;
 
-        public VideoProcessor(IStorage storage, ISession session)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="VideoProcessor" /> class.
+        /// </summary>
+        /// <param name="storage">The storage.</param>
+        /// <param name="databaseConfiguration">The database configuration.</param>
+        public VideoProcessor(IStorage storage, IDatabaseConfiguration databaseConfiguration)
         {
             _storage = storage;
-            _session = session;
+
         }
 
         public string Media
@@ -20,7 +25,7 @@ namespace Momntz.Worker.Core.Implementations.Media.MediaTypes
             get { return "Video"; }
         }
 
-        public void Process(MediaItem message)
+        public void Process(Model.QueueData.Media message)
         {
             
         }

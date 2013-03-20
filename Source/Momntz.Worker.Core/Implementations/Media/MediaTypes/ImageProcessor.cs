@@ -1,49 +1,65 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Globalization;
 using System.IO;
 using Chucksoft.Core.Drawing;
 using Chucksoft.Storage;
 using System.Linq;
-using Hypersonic;
+using Momntz.Core;
 using Momntz.Model;
 using Momntz.Model.Configuration;
-using Momntz.Worker.Core.Implementations.Media.MediaTypes.Image;
+using NHibernate;
 
 namespace Momntz.Worker.Core.Implementations.Media.MediaTypes
 {
     public class ImageProcessor : MediaBase, IMedia
     {
         private readonly ISettings _settings;
-        private readonly ISession _session;
+        private readonly IDatabaseConfiguration _databaseConfiguration;
 
-        static readonly List<Format> _formats =  new List<Format>
+        static readonly List<Format> _formats = new List<Format>
                 {
-                    new Format {ImageFormat = ImageFormat.Bmp, Extensions=new[]{"bmp"}},
-                    new Format {ImageFormat = ImageFormat.Gif, Extensions=new[]{"gif"}},
-                    new Format {ImageFormat = ImageFormat.Jpeg, Extensions=new[]{"jpg", "jpeg"}},
-                    new Format {ImageFormat = ImageFormat.Png, Extensions=new[]{"png"}},
-                    new Format {ImageFormat = ImageFormat.Tiff, Extensions=new[]{"tiff"}},
+                    new Format {ImageFormat = ImageFormat.Bmp, Extensions = new[]{"bmp"}},
+                    new Format {ImageFormat = ImageFormat.Gif, Extensions = new[]{"gif"}},
+                    new Format {ImageFormat = ImageFormat.Jpeg, Extensions = new[]{"jpg", "jpeg"}},
+                    new Format {ImageFormat = ImageFormat.Png, Extensions = new[]{"png"}},
+                    new Format {ImageFormat = ImageFormat.Tiff, Extensions = new[]{"tiff"}},
                 };
 
-        public ImageProcessor(IStorage storage, ISettings settings, ISession session) :base(storage)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ImageProcessor" /> class.
+        /// </summary>
+        /// <param name="storage">The storage.</param>
+        /// <param name="settings">The settings.</param>
+        /// <param name="databaseConfiguration">The database configuration.</param>
+        public ImageProcessor(IStorage storage, ISettings settings, IDatabaseConfiguration databaseConfiguration)
+            : base(storage)
         {
             _settings = settings;
-            _session = session;
+            _databaseConfiguration = databaseConfiguration;
         }
 
+        /// <summary>
+        /// Gets the media.
+        /// </summary>
+        /// <value>The media.</value>
         public string Media
         {
             get { return "Image"; }
         }
 
+        /// <summary>
+        /// Gets the format.
+        /// </summary>
+        /// <param name="imageFormat">The image format.</param>
+        /// <returns>ImageFormat.</returns>
         private static ImageFormat GetFormat(string imageFormat)
         {
             var item = _formats.SingleOrDefault(f => f.Extensions.Any(s => string.Equals(s, imageFormat.ToLower().Trim('.'), StringComparison.InvariantCulture)));
 
-            if(item != null)
+            if (item != null)
             {
                 return item.ImageFormat;
             }
@@ -54,86 +70,169 @@ namespace Momntz.Worker.Core.Implementations.Media.MediaTypes
         /// <summary>
         /// Saves the specified momento id.
         /// </summary>
-        /// <param name="momentoId">The momento id.</param>
+        /// <param name="momento">The momento.</param>
         /// <param name="name">The name.</param>
         /// <param name="mediaType">Type of the media.</param>
         /// <param name="image">The image.</param>
-        private void Save(int momentoId, string name, MediaType mediaType, MediaItem image)
+        /// <param name="session">The session.</param>
+        private static void Save(Momento momento, string name, MediaType mediaType, Model.QueueData.Media image, ISession session)
         {
+            using (var trans = session.BeginTransaction())
+            {
+                session.Save(
+                    new MomentoMedia
+                        {
+                            Filename = image.Filename,
+                            Size = image.Size.ToString(CultureInfo.InvariantCulture),
+                            Momento = momento,
+                            Extension = image.Extension,
+                            Url = "img/" + name,
+                            Username = image.Username,
+                            MediaType = mediaType
+                        });
 
-            _session.Save(
-                new
-                    {
-                        image.Filename,
-                        image.Size,
-                        MomentoId = momentoId,
-                        image.Extension,
-                        Url = "img/" + name,
-                        image.Username,
-                        MediaType = mediaType
-                    }, "MomentoMedia");
+                trans.Commit();
+            }
         }
-
 
         /// <summary>
         /// Processes the specified message.
         /// </summary>
         /// <param name="message">The message.</param>
-        public void Process(MediaItem message)
+        public void Process(Model.QueueData.Media message)
         {
-            ImageFormat format = GetFormat(message.Extension);
+            using (ISession session = _databaseConfiguration.CreateSessionFactory().OpenSession())
+            {
+                var format = GetFormat(message.Extension);
+                var momento = CreateMomento(message, session);
 
-            _session.Save(new { InternalId = message.Id, message.Username, UploadedBy = message.Username, Visibility = "Public" }, "Momento");
+                using (var tran = session.BeginTransaction())
+                {
+                    var user = new MomentoUser { Momento = momento, Username = message.Username };
+                    session.Save(user);
 
-            var single = _session.Query<Momento>().Where(m => m.InternalId == message.Id).Single();
+                    tran.Commit();
+                }
 
-            _session.Save(new {MomentoId = single.Id, Username = message.Username}, "MomentoUser");
+                ResizeAndSaveImages(message, momento, format, session);
+            }
 
-            SaveImage(single.Id, MediaType.SmallImage, _settings.ImageSmallWidth, _settings.ImageSmallHeight, format, message);
-            SaveImage(single.Id, MediaType.MediumImage, _settings.ImageMediumWidth, _settings.ImageMediumHeight, format, message);
-            SaveImage(single.Id, MediaType.LargeImage, _settings.ImageLargeWidth, _settings.ImageLargeHeight, format, message);
-            SaveImage(single.Id, MediaType.OriginalImage, int.MaxValue, int.MaxValue, format, message);
-
-            _session.Database.ConnectionString = _settings.QueueDatabase;
-            _session.Database.CommandType = CommandType.Text;
-            
-            _session.Database.NonQuery(string.Format("Delete From Media Where Id = '{0}'", message.Id));
-
-            //Reset to momntz database
-            _session.Database.ConnectionString = null;
+            DeleteMediaFromQueueDatabase(message);
         }
 
-        private void SaveImage(int momentoId, MediaType mediaType, int maxWidth, int maxHeight, ImageFormat format, MediaItem message)
+        /// <summary>
+        /// Resizes the and save images.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        /// <param name="momento">The momento.</param>
+        /// <param name="format">The format.</param>
+        /// <param name="session">The session.</param>
+        private void ResizeAndSaveImages(Model.QueueData.Media message, Momento momento, ImageFormat format, ISession session)
+        {
+            SaveImage(momento, MediaType.SmallImage, _settings.ImageSmallWidth, _settings.ImageSmallHeight, format, message, session);
+            SaveImage(momento, MediaType.MediumImage, _settings.ImageMediumWidth, _settings.ImageMediumHeight, format, message, session);
+            SaveImage(momento, MediaType.LargeImage, _settings.ImageLargeWidth, _settings.ImageLargeHeight, format, message, session);
+            SaveImage(momento, MediaType.OriginalImage, int.MaxValue, int.MaxValue, format, message, session);
+        }
+
+        /// <summary>
+        /// Deletes the media from queue database.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        private void DeleteMediaFromQueueDatabase(Model.QueueData.Media message)
+        {
+            using (var session = _databaseConfiguration.CreateSessionFactory(_settings.QueueDatabase).OpenSession())
+            using (var trans = session.BeginTransaction())
+            {
+                session.Delete(message);
+                trans.Commit();
+            }
+        }
+
+        /// <summary>
+        /// Creates the momento.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        /// <param name="session">The session.</param>
+        /// <returns>Momento.</returns>
+        private Momento CreateMomento(Model.QueueData.Media message, ISession session)
+        {
+            var momento = new Momento
+                {
+                    InternalId = message.Id,
+                    Username = message.Username,
+                    UploadedBy = message.Username,
+                    Visibility = "Public"
+                };
+
+            using (var tran = session.BeginTransaction())
+            {
+                session.Save(momento);
+                tran.Commit();
+            }
+
+            return momento;
+        }
+
+        /// <summary>
+        /// Saves the image.
+        /// </summary>
+        /// <param name="momento">The momento.</param>
+        /// <param name="mediaType">Type of the media.</param>
+        /// <param name="maxWidth">Width of the max.</param>
+        /// <param name="maxHeight">Height of the max.</param>
+        /// <param name="format">The format.</param>
+        /// <param name="message">The message.</param>
+        /// <param name="session">The session.</param>
+        private void SaveImage(Momento momento, MediaType mediaType, int maxWidth, int maxHeight, ImageFormat format, Model.QueueData.Media message, ISession session)
+        {
+            var name = SaveToStorage(maxWidth, maxHeight, format, message);
+
+            if (mediaType == MediaType.OriginalImage)
+            {
+                var imageMetadata = new ExifData(session);
+                imageMetadata.ExtractExifSave(new MemoryStream(message.Bytes), momento);
+            }
+
+            Save(momento, name, mediaType, message, session);
+        }
+
+        /// <summary>
+        /// Saves to storage.
+        /// </summary>
+        /// <param name="maxWidth">Width of the max.</param>
+        /// <param name="maxHeight">Height of the max.</param>
+        /// <param name="format">The format.</param>
+        /// <param name="message">The message.</param>
+        /// <returns>System.String.</returns>
+        private string SaveToStorage(int maxWidth, int maxHeight, ImageFormat format, Model.QueueData.Media message)
         {
             byte[] bytes = null;
 
             if (maxWidth < int.MaxValue && maxHeight < int.MaxValue)
             {
                 bytes = message.Bytes.ResizeToMax(new Size(maxWidth, maxHeight), format);
-
             }
 
             string type = message.Extension.TrimStart('.');
             string name = string.Format("{0}_{1}{2}", Path.GetFileNameWithoutExtension(message.Filename), DateTime.Now.Ticks, message.Extension);
 
             AddToStorage("img", "image", name, type, bytes ?? message.Bytes);
-
-            if (mediaType == MediaType.OriginalImage)
-            {
-                //Reset to default db
-                _session.Database.ConnectionString = null;
-                _session.Database.CommandType = CommandType.StoredProcedure;
-                ExifData imageMetadata = new ExifData(_session.Database);
-                imageMetadata.ExtractExifSave(new MemoryStream(message.Bytes), momentoId);
-            }
-
-            Save(momentoId, name, mediaType, message);
+            return name;
         }
 
         private class Format
         {
+            /// <summary>
+            /// Gets or sets the image format.
+            /// </summary>
+            /// <value>The image format.</value>
             public ImageFormat ImageFormat { get; set; }
 
+            /// <summary>
+            /// Gets or sets the extensions.
+            /// </summary>
+            /// <value>The extensions.</value>
             public string[] Extensions { get; set; }
         }
     }
