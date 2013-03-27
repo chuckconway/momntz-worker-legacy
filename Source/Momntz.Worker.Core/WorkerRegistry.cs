@@ -1,6 +1,4 @@
-﻿using Chucksoft.Core.Services;
-using Chucksoft.Storage;
-using Momntz.Core;
+﻿using Momntz.Core;
 using Momntz.Infrastructure;
 using Momntz.Model.Configuration;
 using NHibernate;

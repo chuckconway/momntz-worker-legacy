@@ -4,10 +4,11 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
-using Chucksoft.Core.Drawing;
-using Chucksoft.Storage;
+
 using System.Linq;
+using ChuckConway.Images;
 using Momntz.Core;
+using Momntz.Infrastructure;
 using Momntz.Model;
 using Momntz.Model.Configuration;
 using NHibernate;
@@ -139,7 +140,7 @@ namespace Momntz.Worker.Core.Implementations.Media.MediaTypes
         /// Deletes the media from queue database.
         /// </summary>
         /// <param name="message">The message.</param>
-        private void DeleteMediaFromQueueDatabase(Model.QueueData.Media message)
+        public virtual void DeleteMediaFromQueueDatabase(Model.QueueData.Media message)
         {
             using (var session = _databaseConfiguration.CreateSessionFactory(_settings.QueueDatabase).OpenSession())
             using (var trans = session.BeginTransaction())
@@ -155,14 +156,15 @@ namespace Momntz.Worker.Core.Implementations.Media.MediaTypes
         /// <param name="message">The message.</param>
         /// <param name="session">The session.</param>
         /// <returns>Momento.</returns>
-        private Momento CreateMomento(Model.QueueData.Media message, ISession session)
+        public virtual Momento CreateMomento(Model.QueueData.Media message, ISession session)
         {
             var momento = new Momento
                 {
                     InternalId = message.Id,
                     Username = message.Username,
                     UploadedBy = message.Username,
-                    Visibility = "Public"
+                    Visibility = "Public",
+                    
                 };
 
             using (var tran = session.BeginTransaction())
