@@ -7,6 +7,7 @@ using System.Linq;
 using System.ServiceProcess;
 using System.Text;
 using System.Threading.Tasks;
+using Momntz.Worker.Core;
 
 namespace Momntz.Worker
 {
@@ -19,6 +20,8 @@ namespace Momntz.Worker
 
         protected override void OnStart(string[] args)
         {
+            QueueService service = new QueueService();
+            service.Process();
         }
 
         protected override void OnStop()

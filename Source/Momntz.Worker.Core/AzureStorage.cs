@@ -3,6 +3,7 @@ using System.Collections.Specialized;
 using System.IO;
 using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.StorageClient;
+using Momntz.Model.Configuration;
 
 namespace Momntz.Worker.Core
 {
@@ -12,11 +13,15 @@ namespace Momntz.Worker.Core
         private readonly string _cloudAccount;
         private readonly string _cloudKey;
 
-        public AzureStorage(string cloudUrl, string cloudAccount, string cloudKey)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AzureStorage"/> class.
+        /// </summary>
+        /// <param name="settings">The settings.</param>
+        public AzureStorage(ISettings settings)
         {
-            _cloudUrl = cloudUrl;
-            _cloudAccount = cloudAccount;
-            _cloudKey = cloudKey;
+            _cloudUrl = settings.CloudUrl;
+            _cloudAccount = settings.CloudAccount;
+            _cloudKey = settings.CloudKey;
         }
 
         /// <summary>
