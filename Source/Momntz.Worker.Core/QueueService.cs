@@ -13,7 +13,7 @@ namespace Momntz.Worker.Core
 {
     public class QueueService
     {
-        private IList<IMessageProcessor> _processors;
+        private List<IMessageProcessor> _processors;
         private ISettings _settings;
         private IDatabaseConfiguration _databaseConfiguration;
 
@@ -27,7 +27,7 @@ namespace Momntz.Worker.Core
             injection.AddManifest(new MomntzRegistry());
             _databaseConfiguration = injection.Get<IDatabaseConfiguration>();
             _settings = injection.Get<ISettings>();
-            HibernatingRhinos.Profiler.Appender.NHibernate.NHibernateProfiler.Initialize();
+            //HibernatingRhinos.Profiler.Appender.NHibernate.NHibernateProfiler.Initialize();
             var list = RetreiveQueuedItems();
             ProcessQueuedItems(list, injection);
         }
@@ -115,7 +115,7 @@ namespace Momntz.Worker.Core
 
             var messages = (from type in types 
                             where typeof (IMessageProcessor).IsAssignableFrom(type) && !type.IsInterface && !type.IsAbstract
-                            select (IMessageProcessor)injection.Get(type)).ToList();
+                            select injection.GetInstances<IMessageProcessor>().Single(x => x.GetType()== type)).ToList();
 
             _processors = messages;
             return messages;

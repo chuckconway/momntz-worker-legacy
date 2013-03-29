@@ -1,6 +1,7 @@
 ﻿using Momntz.Core;
 using Momntz.Infrastructure;
 using Momntz.Model.Configuration;
+using Momntz.Worker.Core.Implementations;
 using NHibernate;
 using StructureMap.Configuration.DSL;
 
@@ -15,14 +16,14 @@ namespace Momntz.Worker.Core
             For<IStorage>().Use<AzureStorage>();
             For<IConfigurationService>().Use<MomntzConfiguration>();
             For<ISettings>().Use<Settings>();
+           
 
             Scan(
                 s =>
-                {
+                    {
+                        s.AddAllTypesOf<IMessageProcessor>();
                     s.TheCallingAssembly();
                     s.WithDefaultConventions();
-                    //s.ConnectImplementationsToTypesClosing(typeof(ICommandHandler<>));
-                    //s.ConnectImplementationsToTypesClosing(typeof(IProjectionHandler<,>));
                 });
         }
     }

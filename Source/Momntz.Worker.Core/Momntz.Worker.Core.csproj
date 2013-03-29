@@ -95,7 +95,7 @@
       <HintPath>..\..\..\Momntz\Dependencies\nHibernate\NHibernate.dll</HintPath>
     </Reference>
     <Reference Include="StructureMap">
-      <HintPath>..\..\Dependencies\StructureMap\StructureMap.dll</HintPath>
+      <HintPath>..\..\..\ChuckConway\trunk\Source\Dependencies\StructureMap.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
