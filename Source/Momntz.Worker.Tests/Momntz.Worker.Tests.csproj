@@ -79,7 +79,7 @@
       <HintPath>..\..\Dependencies\Momntz\Hypersonic.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
-      <HintPath>..\..\Dependencies\nUnit\nunit.framework.dll</HintPath>
+      <HintPath>..\..\..\Billboard\Dependencies\nUnit\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

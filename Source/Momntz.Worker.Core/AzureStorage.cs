@@ -24,6 +24,13 @@ namespace Momntz.Worker.Core
             _cloudKey = settings.CloudKey;
         }
 
+        //public AzureStorage(string cloudUrl, string cloudAccount, string cloudKey)
+        //{
+        //    _cloudUrl = cloudUrl;
+        //    _cloudAccount = cloudAccount;
+        //    _cloudKey = cloudKey;
+        //}
+
         /// <summary>
         /// Gets the provider.
         /// </summary>
