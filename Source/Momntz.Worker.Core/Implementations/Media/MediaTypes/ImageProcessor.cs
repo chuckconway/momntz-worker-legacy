@@ -27,6 +27,7 @@ namespace Momntz.Worker.Core.Implementations.Media.MediaTypes
                     new Format {ImageFormat = ImageFormat.Jpeg, Extensions = new[]{"jpg", "jpeg"}},
                     new Format {ImageFormat = ImageFormat.Png, Extensions = new[]{"png"}},
                     new Format {ImageFormat = ImageFormat.Tiff, Extensions = new[]{"tiff"}},
+                    new Format {ImageFormat = ImageFormat.Tiff, Extensions = new[]{"tif"}},
                 };
 
         /// <summary>
@@ -102,20 +103,23 @@ namespace Momntz.Worker.Core.Implementations.Media.MediaTypes
         /// <param name="message">The message.</param>
         public void Process(Model.QueueData.Media message)
         {
-            using (ISession session = _databaseConfiguration.CreateSessionFactory().OpenSession())
+            if (message != null)
             {
-                var format = GetFormat(message.Extension);
-                var momento = CreateMomento(message, session);
-
-                using (var tran = session.BeginTransaction())
+                using (ISession session = _databaseConfiguration.CreateSessionFactory().OpenSession())
                 {
-                    var user = new MomentoUser { Momento = momento, Username = message.Username };
-                    session.Save(user);
+                    var format = GetFormat(message.Extension);
+                    var momento = CreateMomento(message, session);
 
-                    tran.Commit();
+                    using (var tran = session.BeginTransaction())
+                    {
+                        var user = new MomentoUser {Momento = momento, Username = message.Username};
+                        session.Save(user);
+
+                        tran.Commit();
+                    }
+
+                    ResizeAndSaveImages(message, momento, format, session);
                 }
-
-                ResizeAndSaveImages(message, momento, format, session);
             }
 
             DeleteMediaFromQueueDatabase(message);
@@ -161,10 +165,9 @@ namespace Momntz.Worker.Core.Implementations.Media.MediaTypes
             var momento = new Momento
                 {
                     InternalId = message.Id,
-                    Username = message.Username,
+                    User = new User { Username = message.Username },
                     UploadedBy = message.Username,
-                    Visibility = "Public",
-                    
+                    Visibility = "Public"
                 };
 
             using (var tran = session.BeginTransaction())
