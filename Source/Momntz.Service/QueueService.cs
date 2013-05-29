@@ -1,19 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using Microsoft.WindowsAzure;
 using Momntz.Core;
 using Momntz.Data.Commands.Queue;
 using Momntz.Infrastructure;
 using Momntz.Model.Configuration;
 using Momntz.Model.QueueData;
-using Momntz.Worker.Core.Implementations;
+using Momntz.Worker.Core;
 
-namespace Momntz.Worker.Core
+using Microsoft.ServiceBus;
+
+namespace Momntz.Service
 {
     public class QueueService
     {
-        private List<IMessageProcessor> _processors;
+        private List<ISaga> _processors;
         private ISettings _settings;
         private IDatabaseConfiguration _databaseConfiguration;
 
@@ -41,15 +43,15 @@ namespace Momntz.Worker.Core
         {
             IList<Queue> queues;
 
-            //using (var session = _databaseConfiguration.CreateSessionFactory(_settings.QueueDatabase).OpenSession())
-            //using (var tran = session.BeginTransaction())
-            //{
-            //   queues = session.QueryOver<Queue>()
-            //           .Where(x => x.MessageStatus == MessageStatus.Queued)
-            //           .List();
+            // Create the topic if it does not exist already
+            string connectionString = CloudConfigurationManager.GetSetting("Microsoft.ServiceBus.ConnectionString");
 
-            //    tran.Commit();
-            //}
+            var namespaceManager = NamespaceManager.CreateFromConnectionString(connectionString);
+
+            if (!namespaceManager.TopicExists("TestTopic"))
+            {
+                namespaceManager.CreateTopic("TestTopic");
+            }
 
             return queues;
         }

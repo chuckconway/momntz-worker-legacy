@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Momntz.Service.Core.IOC;
 
-namespace Momntz.Worker.Console
+namespace Momntz.Service.Host
 {
     class Program
     {
@@ -11,7 +15,6 @@ namespace Momntz.Worker.Console
             server.Start();
 
             Console.ReadLine();
-            
         }
     }
 }
