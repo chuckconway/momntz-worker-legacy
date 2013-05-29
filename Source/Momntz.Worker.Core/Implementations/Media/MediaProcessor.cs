@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 using Momntz.Core;
-using Momntz.Infrastructure;
+using Momntz.Core.Storage;
 using Momntz.Model.Configuration;
 using Momntz.Model.Core;
 using Momntz.Worker.Core.Implementations.Media.MediaTypes;

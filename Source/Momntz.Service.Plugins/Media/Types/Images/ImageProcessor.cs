@@ -12,6 +12,7 @@ using Momntz.Core.Storage;
 using Momntz.Infrastructure;
 using Momntz.Model;
 using Momntz.Model.Configuration;
+using Momntz.Service.Plugins.Media.Types;
 using NHibernate;
 
 namespace Momntz.Worker.Core.Implementations.Media.MediaTypes

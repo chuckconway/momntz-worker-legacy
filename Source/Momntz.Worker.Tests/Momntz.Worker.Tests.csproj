@@ -92,12 +92,17 @@
   <ItemGroup>
     <Compile Include="Integration\AzureStorageTests.cs" />
     <Compile Include="Integration\QueueServiceTests.cs" />
+    <Compile Include="Integration\ServiceTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Unit\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Momntz.Service\Momntz.Service.csproj">
+      <Project>{CA618B8F-AD10-4B4F-B469-1CF108EE311E}</Project>
+      <Name>Momntz.Service</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Momntz.Worker.Core\Momntz.Worker.Core.csproj">
       <Project>{8468247f-1c2b-4bd8-8d9f-d9303768759b}</Project>
       <Name>Momntz.Worker.Core</Name>

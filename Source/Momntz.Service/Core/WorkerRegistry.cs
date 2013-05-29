@@ -2,7 +2,6 @@
 using Momntz.Core.Storage;
 using Momntz.Infrastructure;
 using Momntz.Model.Configuration;
-using Momntz.Worker.Core.Implementations;
 using NHibernate;
 using StructureMap.Configuration.DSL;
 

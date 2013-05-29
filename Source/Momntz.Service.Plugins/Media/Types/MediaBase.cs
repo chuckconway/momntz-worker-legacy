@@ -1,8 +1,7 @@
 ﻿
-using Momntz.Core.Storage;
+using ChuckConway.Cloud.Storage;
 
-
-namespace Momntz.Worker.Core.Implementations.Media.MediaTypes
+namespace Momntz.Service.Plugins.Media.Types
 {
     public abstract class MediaBase
     {

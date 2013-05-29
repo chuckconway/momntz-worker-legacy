@@ -109,7 +109,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AzureStorage.cs" />
     <Compile Include="Implementations\Media\MediaTypes\DocumentProcessor.cs" />
     <Compile Include="Implementations\Media\MediaTypes\ImageProcessor.cs" />
     <Compile Include="Implementations\Media\MediaProcessor.cs" />
@@ -118,10 +117,9 @@
     <Compile Include="Implementations\Media\MediaTypes\Media.cs" />
     <Compile Include="Implementations\Media\MediaTypes\MediaBase.cs" />
     <Compile Include="Implementations\Media\MediaTypes\VideoProcessor.cs" />
-    <Compile Include="Implementations\IMessageProcessor.cs" />
+    <Compile Include="Implementations\ISaga.cs" />
     <Compile Include="Implementations\Email\EmailMessage.cs" />
     <Compile Include="Implementations\Email\EmailProcessor.cs" />
-    <Compile Include="IStorage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueueService.cs" />
     <Compile Include="WorkerRegistry.cs" />
