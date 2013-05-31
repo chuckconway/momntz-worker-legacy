@@ -4,10 +4,11 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Momntz.Model;
+using Momntz.Data.Schema;
+
 using NHibernate;
 
-namespace Momntz.Worker.Core.Implementations.Media.MediaTypes
+namespace Momntz.Service.Plugins.Media.Types.Images
 {
     public class ExifData
     {

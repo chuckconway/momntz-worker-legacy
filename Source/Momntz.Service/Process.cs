@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.ServiceProcess;
-using Nancy.Hosting.Self;
 
 namespace Momntz.Service
 {
     public partial class Process : ServiceBase
     {
-        ConcurrentQueue<string> queue = new ConcurrentQueue<string>();
-        
+  
 
         public Process()
         {

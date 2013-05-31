@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Momntz.Worker.Core.Implementations.Media.MediaTypes
+namespace Momntz.Service.Plugins.Media
 {
-    public class MediaItem 
+    public class MediaMessage 
     {
         /// <summary>
         /// Gets or sets the id.
@@ -46,31 +46,5 @@ namespace Momntz.Worker.Core.Implementations.Media.MediaTypes
         /// <value>The type of the media.</value>
         public string MediaType { get; set; }
 
-        /// <summary>
-        /// Gets or sets the bytes.
-        /// </summary>
-        /// <value>The bytes.</value>
-        public byte[] Bytes { get; set; }
-
-        /// <summary>
-        /// Perform a deep Copy of the object.
-        /// </summary>
-        /// <typeparam name="T">The type of object being copied.</typeparam>
-        /// <param name="source">The object instance to copy.</param>
-        /// <returns>The copied object.</returns>
-        public static MediaItem Clone(MediaItem source)
-        {
-            return new MediaItem
-                                 {
-                                     Id = source.Id,
-                                     Filename = source.Filename,
-                                     Extension = source.Extension,
-                                     Size = source.Size,
-                                     Username = source.Username,
-                                     ContentType = source.ContentType,
-                                     MediaType = source.MediaType,
-                                     Bytes = source.Bytes
-                                 };
-        }
     }
 }

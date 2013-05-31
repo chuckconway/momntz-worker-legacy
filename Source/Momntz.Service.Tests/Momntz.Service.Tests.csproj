@@ -30,13 +30,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.ServiceBus, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Momntz.Worker\packages\WindowsAzure.ServiceBus.2.1.0.0\lib\net40-full\Microsoft.ServiceBus.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.WindowsAzure.Configuration, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\Dependencies\JSON.Net\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="ChuckConway.Cloud">
+      <HintPath>..\..\..\Momntz\Dependencies\ChuckConway\ChuckConway.Cloud.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\..\..\AutoFixture.NUnit\Dependencies\nunit.framework.dll</HintPath>
