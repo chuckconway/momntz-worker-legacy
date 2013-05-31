@@ -1,30 +1,19 @@
-﻿using Momntz.Core;
-using Momntz.Core.Storage;
+﻿using ChuckConway.Cloud.Storage;
 using Momntz.Infrastructure;
-using Momntz.Model.Configuration;
+using Momntz.Infrastructure.Configuration;
 using NHibernate;
 using StructureMap.Configuration.DSL;
 
-namespace Momntz.Worker.Core
+namespace Momntz.Service.Core
 {
     public class WorkerRegistry : Registry
     {
         public WorkerRegistry()
         {
-            For<IDatabaseConfiguration>().Use(new DatabaseConfiguration());
-            For<ISession>().Use(new DatabaseConfiguration().CreateSessionFactory().OpenSession());
+            For<ISessionFactory>().Use(Database.CreateSessionFactory());
             For<IStorage>().Use<AzureStorage>();
             For<IConfigurationService>().Use<MomntzConfiguration>();
             For<ISettings>().Use<Settings>();
-           
-
-            Scan(
-                s =>
-                    {
-                        s.AddAllTypesOf<IMessageProcessor>();
-                    s.TheCallingAssembly();
-                    s.WithDefaultConventions();
-                });
         }
     }
 }

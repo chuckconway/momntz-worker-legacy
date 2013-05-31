@@ -1,9 +1,7 @@
-﻿using Momntz.Core;
-using Momntz.Core.Storage;
-using Momntz.Infrastructure;
+﻿using ChuckConway.Cloud.Storage;
+using Momntz.Core;
 
-
-namespace Momntz.Worker.Core.Implementations.Media.MediaTypes
+namespace Momntz.Service.Plugins.Media.Types.Videos
 {
     public class VideoProcessor : IMedia
     {
@@ -14,20 +12,20 @@ namespace Momntz.Worker.Core.Implementations.Media.MediaTypes
         /// </summary>
         /// <param name="storage">The storage.</param>
         /// <param name="databaseConfiguration">The database configuration.</param>
-        public VideoProcessor(IStorage storage, IDatabaseConfiguration databaseConfiguration)
+        public VideoProcessor(IStorage storage)
         {
             _storage = storage;
 
         }
 
-        public string Media
+        /// <summary>
+        /// Processes the specified message.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        /// <exception cref="System.NotImplementedException"></exception>
+        public void Consume(MediaMessage message)
         {
-            get { return "Video"; }
-        }
-
-        public void Process(Model.QueueData.Media message)
-        {
-            
+            throw new System.NotImplementedException();
         }
     }
 }

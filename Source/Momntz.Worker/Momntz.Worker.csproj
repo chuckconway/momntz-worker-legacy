@@ -103,12 +103,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Momntz.Worker.Core\Momntz.Worker.Core.csproj">
-      <Project>{8468247F-1C2B-4BD8-8D9F-D9303768759B}</Project>
-      <Name>Momntz.Worker.Core</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

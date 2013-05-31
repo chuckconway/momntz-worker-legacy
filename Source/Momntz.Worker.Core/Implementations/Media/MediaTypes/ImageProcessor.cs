@@ -142,20 +142,6 @@ namespace Momntz.Worker.Core.Implementations.Media.MediaTypes
         }
 
         /// <summary>
-        /// Deletes the media from queue database.
-        /// </summary>
-        /// <param name="message">The message.</param>
-        public virtual void DeleteMediaFromQueueDatabase(Model.QueueData.Media message)
-        {
-            using (var session = _databaseConfiguration.CreateSessionFactory(_settings.QueueDatabase).OpenSession())
-            using (var trans = session.BeginTransaction())
-            {
-                session.Delete(message);
-                trans.Commit();
-            }
-        }
-
-        /// <summary>
         /// Creates the momento.
         /// </summary>
         /// <param name="message">The message.</param>

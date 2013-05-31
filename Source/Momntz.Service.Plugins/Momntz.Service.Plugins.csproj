@@ -30,11 +30,22 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ChuckConway">
+      <HintPath>..\Momntz.Worker.Core\bin\DEV\ChuckConway.dll</HintPath>
+    </Reference>
     <Reference Include="ChuckConway.Cloud">
       <HintPath>..\..\..\Momntz\Dependencies\ChuckConway\ChuckConway.Cloud.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Momntz.Worker\packages\Newtonsoft.Json.5.0.5\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate">
+      <HintPath>..\Momntz.Worker.Core\bin\DEV\NHibernate.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -42,17 +53,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Media\MediaSaga.cs" />
     <Compile Include="Media\Types\Documents\DocumentProcessor.cs" />
     <Compile Include="Media\Types\Images\ExifData.cs" />
     <Compile Include="Media\Types\Images\ImageProcessor.cs" />
+    <Compile Include="Media\Types\Images\ImageType.cs" />
     <Compile Include="Media\Types\IMediaTypes.cs" />
-    <Compile Include="Media\Types\Media.cs" />
-    <Compile Include="Media\Types\MediaBase.cs" />
+    <Compile Include="Media\MediaMessage.cs" />
     <Compile Include="Media\Types\Videos\VideoProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Email\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Momntz\Source\Momntz\Momntz.csproj">
+      <Project>{77CC17DF-C471-42BF-B5F6-D55EAF918891}</Project>
+      <Name>Momntz</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

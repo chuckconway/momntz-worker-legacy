@@ -1,5 +1,4 @@
-﻿using Microsoft.ServiceBus.Messaging;
-using Microsoft.WindowsAzure;
+﻿using ChuckConway.Cloud.Queue;
 using NUnit.Framework;
 
 namespace Momntz.Service.Tests
@@ -10,22 +9,14 @@ namespace Momntz.Service.Tests
         [Test]
         public void Test()
         {
-            string connectionString = CloudConfigurationManager.GetSetting("Microsoft.ServiceBus.ConnectionString");
-          
-            var client = QueueClient.CreateFromConnectionString(connectionString, "media", ReceiveMode.PeekLock);
-
             var demo = new DemoMessage {FirstName = "Chuck", LastName = "Conway"};
-            var serialized = Newtonsoft.Json.JsonConvert.SerializeObject(demo);
-            
-            client.Send(new BrokeredMessage(serialized));
 
+            IQueue q = new AzureQueue();
+            //q.Send("media", demo);
 
-            BrokeredMessage message;
-            while ((message = client.Receive()) != null)
-            {
-                message.
+            int messageCount = 0;
 
-            }
+            q.ProcessAllMessages<DemoMessage>("media", r => messageCount++);
         }
     }
 

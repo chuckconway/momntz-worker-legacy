@@ -1,4 +1,4 @@
-﻿using Momntz.Worker.Core;
+﻿using Momntz.Service;
 using NUnit.Framework;
 
 namespace Momntz.Worker.Tests.Integration
