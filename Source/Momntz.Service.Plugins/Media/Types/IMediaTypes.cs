@@ -6,6 +6,6 @@
         /// Processes the specified message.
         /// </summary>
         /// <param name="message">The message.</param>
-        void Consume(MediaMessage message);
+        void Consume(Messaging.Models.Media message);
     }
 }

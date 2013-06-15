@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using ChuckConway.Cloud.Queue;
 using ChuckConway.Cloud.Storage;
-using Momntz.Core;
 using Momntz.Infrastructure;
 using Momntz.Infrastructure.Configuration;
 using Momntz.Messaging;
@@ -13,9 +12,6 @@ namespace Momntz.Service
 {
     public class QueueService
     {
-        private List<ISaga> _processors;
-        private ISettings _settings;
-
         private List<Plugin> plugins;
 
         /// <summary>
@@ -40,7 +36,7 @@ namespace Momntz.Service
             foreach (var plugin in plugins)
             {
                 Plugin plugin1 = plugin;
-                queue.ProcessAllMessages(plugin.Queue, s => plugin1.Saga.Consume(s));
+                queue.ProcessAllMessages<string>(plugin.Queue, s => plugin1.Saga.Consume(s));
             }
 
 
@@ -55,7 +51,7 @@ namespace Momntz.Service
             IInjection injection = new StructureMapInjection();
             injection.AddManifest(new WorkerRegistry());
             injection.AddManifest(new MomntzRegistry());
-            _settings = injection.Get<ISettings>();
+            injection.Get<ISettings>();
 
             return injection;
         }

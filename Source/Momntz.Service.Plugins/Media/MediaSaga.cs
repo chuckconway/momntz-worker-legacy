@@ -51,7 +51,7 @@ namespace Momntz.Service.Plugins.Media
         /// <exception cref="System.NotImplementedException"></exception>
         public void Consume(string message)
         {
-            var mediaMessage = JsonConvert.DeserializeObject<MediaMessage>(message);
+            var mediaMessage = JsonConvert.DeserializeObject<Messaging.Models.Media>(message);
             var processor = _processors.First(m => m.Extensions.Contains(mediaMessage.Extension));
             processor.MediaProcessor.Consume(mediaMessage);
         }
