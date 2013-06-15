@@ -23,7 +23,7 @@ namespace Momntz.Service.Plugins.Media.Types.Videos
         /// </summary>
         /// <param name="message">The message.</param>
         /// <exception cref="System.NotImplementedException"></exception>
-        public void Consume(MediaMessage message)
+        public void Consume(Messaging.Models.Media message)
         {
             throw new System.NotImplementedException();
         }

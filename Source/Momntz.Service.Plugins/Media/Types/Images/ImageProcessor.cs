@@ -90,7 +90,7 @@ namespace Momntz.Service.Plugins.Media.Types.Images
         /// Processes the specified message.
         /// </summary>
         /// <param name="message">The message.</param>
-        public void Consume(MediaMessage message)
+        public void Consume(Messaging.Models.Media message)
         {
             if (message != null)
             {
@@ -122,7 +122,7 @@ namespace Momntz.Service.Plugins.Media.Types.Images
         /// <param name="format">The format.</param>
         /// <param name="momento">The momento.</param>
         /// <returns>List{InParameters}.</returns>
-        private IEnumerable<InParameters> GetImageConfigurations(byte[] bytes, ImageFormat format, MediaMessage mediaMessage, Momento momento)
+        private IEnumerable<InParameters> GetImageConfigurations(byte[] bytes, ImageFormat format, Messaging.Models.Media mediaMessage, Momento momento)
         {
             return new List<InParameters>
             {
@@ -145,11 +145,6 @@ namespace Momntz.Service.Plugins.Media.Types.Images
             {
                 SaveImage(configuration, session);
             }
-
-            //SaveImage(momento, MomentoMediaType.SmallImage, _settings.ImageSmallWidth, _settings.ImageSmallHeight, format, MediaMessage, session);
-            //SaveImage(momento, MomentoMediaType.MediumImage, _settings.ImageMediumWidth, _settings.ImageMediumHeight, format, MediaMessage, session);
-            //SaveImage(momento, MomentoMediaType.LargeImage, _settings.ImageLargeWidth, _settings.ImageLargeHeight, format, MediaMessage, session);
-            //SaveImage(momento, MomentoMediaType.OriginalImage, int.MaxValue, int.MaxValue, format, MediaMessage, session);
         }
 
         /// <summary>
@@ -158,7 +153,7 @@ namespace Momntz.Service.Plugins.Media.Types.Images
         /// <param name="mediaMessage">The MediaMessage.</param>
         /// <param name="session">The session.</param>
         /// <returns>Momento.</returns>
-        public virtual Momento CreateMomento(MediaMessage mediaMessage, ISession session)
+        public virtual Momento CreateMomento(Messaging.Models.Media mediaMessage, ISession session)
         {
             var momento = new Momento
                 {
@@ -241,7 +236,7 @@ namespace Momntz.Service.Plugins.Media.Types.Images
             /// Gets or sets the MediaMessage.
             /// </summary>
             /// <value>The MediaMessage.</value>
-            public MediaMessage MediaMessage { get; set; }
+            public Messaging.Models.Media MediaMessage { get; set; }
 
             /// <summary>
             /// Gets or sets the height of the max.

@@ -30,10 +30,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ChuckConway">
-      <HintPath>..\Momntz.Worker.Core\bin\DEV\ChuckConway.dll</HintPath>
+    <Reference Include="ChuckConway, Version=1.0.0.1, Culture=neutral, PublicKeyToken=1be0efc4250339a2, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Momntz\Dependencies\ChuckConway\ChuckConway.dll</HintPath>
     </Reference>
-    <Reference Include="ChuckConway.Cloud">
+    <Reference Include="ChuckConway.Cloud, Version=1.0.1.1, Culture=neutral, PublicKeyToken=1be0efc4250339a2, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Momntz\Dependencies\ChuckConway\ChuckConway.Cloud.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -59,7 +61,6 @@
     <Compile Include="Media\Types\Images\ImageProcessor.cs" />
     <Compile Include="Media\Types\Images\ImageType.cs" />
     <Compile Include="Media\Types\IMediaTypes.cs" />
-    <Compile Include="Media\MediaMessage.cs" />
     <Compile Include="Media\Types\Videos\VideoProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
