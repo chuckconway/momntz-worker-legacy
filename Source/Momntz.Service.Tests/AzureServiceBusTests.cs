@@ -1,5 +1,4 @@
-﻿using ChuckConway.Cloud.Queue;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 
 namespace Momntz.Service.Tests
 {
@@ -9,14 +8,17 @@ namespace Momntz.Service.Tests
         [Test]
         public void Test()
         {
-            var demo = new DemoMessage {FirstName = "Chuck", LastName = "Conway"};
+            QueueService service = new QueueService();
+            service.Process();
 
-            IQueue q = new AzureQueue();
-            //q.Send("media", demo);
+            //var demo = new DemoMessage {FirstName = "Chuck", LastName = "Conway"};
 
-            int messageCount = 0;
+            //IQueue q = new AzureQueue();
+            ////q.Send("media", demo);
 
-            q.ProcessAllMessages<DemoMessage>("media", r => messageCount++);
+            //int messageCount = 0;
+
+            //q.ProcessAllMessages<DemoMessage>("media", r => messageCount++);
         }
     }
 

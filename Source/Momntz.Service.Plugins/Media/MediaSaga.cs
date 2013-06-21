@@ -52,7 +52,7 @@ namespace Momntz.Service.Plugins.Media
         public void Consume(string message)
         {
             var mediaMessage = JsonConvert.DeserializeObject<Messaging.Models.Media>(message);
-            var processor = _processors.First(m => m.Extensions.Contains(mediaMessage.Extension));
+            var processor = _processors.First(m => m.Extensions.Contains(mediaMessage.Extension.ToLower()));
             processor.MediaProcessor.Consume(mediaMessage);
         }
 

@@ -79,7 +79,7 @@ namespace Momntz.Service.Plugins.Media.Types.Images
                             Extension = parameters.MediaMessage.Extension,
                             Url = "img/" + name,
                             Username = parameters.MediaMessage.Username,
-                            MomentoMediaType = parameters.MomentoMediaType
+                            MediaType = parameters.MomentoMediaType
                         });
 
                 trans.Commit();
@@ -94,13 +94,12 @@ namespace Momntz.Service.Plugins.Media.Types.Images
         {
             if (message != null)
             {
+                var bytes = _storage.GetFile(QueueConstants.MediaQueue, message.Id.ToString());
+                var format = GetFormat(message.Extension);
+
                 using (ISession session = _sessionFactory.OpenSession())
                 {
-                    var bytes = _storage.GetFile(QueueConstants.MediaQueue, message.Id.ToString());
-                    var format = GetFormat(message.Extension);
-                    var momento = CreateMomento(message, session);
-
-                    var imageConfigurations = GetImageConfigurations(bytes, format, message, momento);
+                    var momento = Create(message, session);
 
                     using (var tran = session.BeginTransaction())
                     {
@@ -109,6 +108,8 @@ namespace Momntz.Service.Plugins.Media.Types.Images
 
                         tran.Commit();
                     }
+
+                    var imageConfigurations = GetImageConfigurations(bytes, format, message, momento);
 
                     ResizeAndSaveImages(imageConfigurations, session);
                 }
@@ -153,15 +154,9 @@ namespace Momntz.Service.Plugins.Media.Types.Images
         /// <param name="mediaMessage">The MediaMessage.</param>
         /// <param name="session">The session.</param>
         /// <returns>Momento.</returns>
-        public virtual Momento CreateMomento(Messaging.Models.Media mediaMessage, ISession session)
+        public virtual Momento Create(Messaging.Models.Media mediaMessage, ISession session)
         {
-            var momento = new Momento
-                {
-                    InternalId = mediaMessage.Id,
-                    User = new User { Username = mediaMessage.Username },
-                    UploadedBy = mediaMessage.Username,
-                    Visibility = "Public"
-                };
+            var momento = PopulateMomentoObject(mediaMessage);
 
             using (var tran = session.BeginTransaction())
             {
@@ -169,6 +164,23 @@ namespace Momntz.Service.Plugins.Media.Types.Images
                 tran.Commit();
             }
 
+            return momento;
+        }
+
+        /// <summary>
+        /// Populates the momento object.
+        /// </summary>
+        /// <param name="mediaMessage">The media message.</param>
+        /// <returns>Momento.</returns>
+        private static Momento PopulateMomentoObject(Messaging.Models.Media mediaMessage)
+        {
+            var momento = new Momento
+                {
+                    InternalId = mediaMessage.Id,
+                    User = new User {Username = mediaMessage.Username},
+                    UploadedBy = mediaMessage.Username,
+                    Visibility = "Public"
+                };
             return momento;
         }
 
@@ -205,7 +217,7 @@ namespace Momntz.Service.Plugins.Media.Types.Images
             }
 
             string type = parameters.MediaMessage.Extension.TrimStart('.');
-            string name = string.Format("{0}_{1}{2}", Path.GetFileNameWithoutExtension(parameters.MediaMessage.Filename), DateTime.Now.Ticks, parameters.MediaMessage.Extension);
+            string name = string.Format("{0}_{1}.{2}", Path.GetFileNameWithoutExtension(parameters.MediaMessage.Filename), DateTime.Now.Ticks, parameters.MediaMessage.Extension);
 
             AddToStorage("img", "image", name, type, bytes ?? parameters.Bytes);
             return name;
