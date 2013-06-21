@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Timers;
 using ChuckConway.Cloud.Queue;
 using ChuckConway.Cloud.Storage;
 using Momntz.Infrastructure;
@@ -32,15 +34,35 @@ namespace Momntz.Service
         /// </summary>
         public void Process()
         {
-            IQueue queue = new AzureQueue();
-            foreach (var plugin in plugins)
-            {
-                Plugin plugin1 = plugin;
-                queue.ProcessAllMessages<string>(plugin.Queue, s => plugin1.Saga.Consume(s));
-            }
+            CheckQueues();
 
+            //Timer timer = new Timer(30000);
+            //timer.Elapsed += timer_Elapsed;
 
             //HibernatingRhinos.Profiler.Appender.NHibernate.NHibernateProfiler.Initialize();
+        }
+
+        void timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            CheckQueues();
+        }
+
+        private void CheckQueues()
+        {
+            IQueue queue = new AzureQueue();
+            queue.OnException += queue_OnException;
+
+            foreach (var plugin in plugins)
+            {
+                Plugin plugin2 = plugin;
+                //Task.Factory.StartNew(() => queue.ProcessAllMessages<string>(plugin2.Queue, s => plugin2.Saga.Consume(s)));
+                queue.ProcessAllMessages<string>(plugin2.Queue, s => plugin2.Saga.Consume(s));
+            }
+        }
+
+        void queue_OnException(System.Exception e, string s)
+        {
+            string chuck = string.Empty;
         }
 
         /// <summary>
