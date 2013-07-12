@@ -29,9 +29,9 @@ namespace Momntz.Service.Plugins.Media.Types.Images
         /// <param name="stream">The stream.</param>
         /// <param name="momento">The momento.</param>
         /// <returns>DateTime.</returns>
-        public  DateTime ExtractExifSave(Stream stream, Momento momento)
+        public  DateTime? ExtractExifSave(Stream stream, Momento momento)
         {
-            DateTime date = DateTime.MinValue;
+            DateTime? date = null;
 
             using (stream)
             {
@@ -97,7 +97,7 @@ namespace Momntz.Service.Plugins.Media.Types.Images
         /// <param name="value">The value.</param>
         /// <param name="date">The date.</param>
         /// <returns></returns>
-        private static DateTime GetDate(string id, string value, DateTime date)
+        private static DateTime? GetDate(string id, string value, DateTime? date)
         {
             if (id == "9003" && !string.IsNullOrEmpty(value))
             {

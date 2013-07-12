@@ -99,21 +99,45 @@ namespace Momntz.Service.Plugins.Media.Types.Images
 
                 using (ISession session = _sessionFactory.OpenSession())
                 {
-                    var momento = Create(message, session);
-
-                    using (var tran = session.BeginTransaction())
-                    {
-                        var user = new MomentoUser {Momento = momento, Username = message.Username};
-                        session.Save(user);
-
-                        tran.Commit();
-                    }
-
+                    var momento = SaveMomento(message, session, bytes);
                     var imageConfigurations = GetImageConfigurations(bytes, format, message, momento);
 
                     ResizeAndSaveImages(imageConfigurations, session);
+
+                    _storage.DeleteFile(QueueConstants.MediaQueue, message.Id.ToString());
                 }
             }
+        }
+
+        /// <summary>
+        /// Saves the momento.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        /// <param name="session">The session.</param>
+        /// <param name="bytes">The bytes.</param>
+        /// <returns>Momntz.Data.Schema.Momento.</returns>
+        private Momento SaveMomento(Messaging.Models.Media message, ISession session, byte[] bytes)
+        {
+            var momento = Create(message, session);
+            var dateime = SaveExifInformation(bytes, momento, session);
+
+            using (var tran = session.BeginTransaction())
+            {
+                if (dateime.HasValue)
+                {
+                    momento.Day = dateime.Value.Day;
+                    momento.Month = dateime.Value.Month;
+                    momento.Year = dateime.Value.Year;
+
+                    session.Update(momento);
+                }
+
+                var user = new MomentoUser {Momento = momento, Username = message.Username};
+                session.Save(user);
+                tran.Commit();
+            }
+
+            return momento;
         }
 
         /// <summary>
@@ -192,14 +216,22 @@ namespace Momntz.Service.Plugins.Media.Types.Images
         private void SaveImage(InParameters parameters, ISession session)
         {
             var name = SaveToStorage(parameters);
-
-            if (parameters.MomentoMediaType == MomentoMediaType.OriginalImage)
-            {
-                var imageMetadata = new ExifData(session);
-                imageMetadata.ExtractExifSave(new MemoryStream(parameters.Bytes), parameters.Momento);
-            }
-
             Save(name, parameters, session);
+        }
+
+        /// <summary>
+        /// Saves the exif information.
+        /// </summary>
+        /// <param name="bytes">The bytes.</param>
+        /// <param name="momento">The momento.</param>
+        /// <param name="session">The session.</param>
+        /// <returns>System.Nullable{DateTime}.</returns>
+        private static DateTime? SaveExifInformation(byte[] bytes, Momento momento, ISession session)
+        {
+            var imageMetadata = new ExifData(session);
+            DateTime? photoDateTime = imageMetadata.ExtractExifSave(new MemoryStream(bytes), momento);
+
+            return photoDateTime;
         }
 
         /// <summary>
