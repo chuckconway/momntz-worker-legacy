@@ -1,4 +1,7 @@
-﻿using NUnit.Framework;
+﻿using System.Data;
+
+using Momntz.Infrastructure.Logging;
+using NUnit.Framework;
 
 namespace Momntz.Service.Tests
 {
@@ -6,10 +9,15 @@ namespace Momntz.Service.Tests
     public class AzureServiceBusTests
     {
         [Test]
+        [LogAspect]
         public void Test()
         {
-            QueueService service = new QueueService();
-            service.Process();
+            string chuck = "chuck";
+
+            //QueueService service = new QueueService();
+            //service.Process();
+
+            TestMethod("chuck", "chuck2", null);
 
             //var demo = new DemoMessage {FirstName = "Chuck", LastName = "Conway"};
 
@@ -19,6 +27,24 @@ namespace Momntz.Service.Tests
             //int messageCount = 0;
 
             //q.ProcessAllMessages<DemoMessage>("media", r => messageCount++);
+        }
+
+        [LogAspect]
+        public void TestMethod(string chuck)
+        {
+
+        }
+
+        [LogAspect]
+        public void TestMethod(string chuck, int parmeterTwo)
+        {
+
+        }
+
+        [LogAspect]
+        public void TestMethod(string chuck, string parmeterTwo, string nullValue = null)
+        {
+
         }
     }
 
