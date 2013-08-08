@@ -13,8 +13,7 @@ namespace Momntz.WindowsService
         /// </summary>
         public MomntzServiceInstaller()
         {
-            var serviceProcessInstaller =
-                               new ServiceProcessInstaller();
+            var serviceProcessInstaller = new ServiceProcessInstaller();
             var serviceInstaller = new ServiceInstaller();
 
             //# Service Account Information

@@ -3,6 +3,7 @@ using System.Linq;
 
 using ChuckConway.Cloud.Storage;
 using Momntz.Infrastructure.Configuration;
+using Momntz.Infrastructure.Instrumentation.Logging;
 using Momntz.Messaging;
 using Momntz.Service.Plugins.Media.Types;
 using Momntz.Service.Plugins.Media.Types.Documents;
@@ -49,6 +50,7 @@ namespace Momntz.Service.Plugins.Media
         /// </summary>
         /// <param name="message">The message.</param>
         /// <exception cref="System.NotImplementedException"></exception>
+        [Log]
         public void Consume(string message)
         {
             var mediaMessage = JsonConvert.DeserializeObject<Messaging.Models.Media>(message);

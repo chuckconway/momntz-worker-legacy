@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Momntz", "..\..\Momntz\Sour
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Momntz.WindowsService", "Momntz.WindowsService\Momntz.WindowsService.csproj", "{098A4E9B-19CD-4513-8E19-950EBBD52B85}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Momntz.Service.Console", "Momntz.Service.Console\Momntz.Service.Console.csproj", "{D468B38E-357B-4B9F-9ADB-09FBF3AD20E7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,6 +83,18 @@ Global
 		{098A4E9B-19CD-4513-8E19-950EBBD52B85}.QA|Any CPU.Build.0 = Release|Any CPU
 		{098A4E9B-19CD-4513-8E19-950EBBD52B85}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{098A4E9B-19CD-4513-8E19-950EBBD52B85}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D468B38E-357B-4B9F-9ADB-09FBF3AD20E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D468B38E-357B-4B9F-9ADB-09FBF3AD20E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D468B38E-357B-4B9F-9ADB-09FBF3AD20E7}.DEV|Any CPU.ActiveCfg = Debug|Any CPU
+		{D468B38E-357B-4B9F-9ADB-09FBF3AD20E7}.DEV|Any CPU.Build.0 = Debug|Any CPU
+		{D468B38E-357B-4B9F-9ADB-09FBF3AD20E7}.LOCAL|Any CPU.ActiveCfg = Release|Any CPU
+		{D468B38E-357B-4B9F-9ADB-09FBF3AD20E7}.LOCAL|Any CPU.Build.0 = Release|Any CPU
+		{D468B38E-357B-4B9F-9ADB-09FBF3AD20E7}.PROD|Any CPU.ActiveCfg = Release|Any CPU
+		{D468B38E-357B-4B9F-9ADB-09FBF3AD20E7}.PROD|Any CPU.Build.0 = Release|Any CPU
+		{D468B38E-357B-4B9F-9ADB-09FBF3AD20E7}.QA|Any CPU.ActiveCfg = Release|Any CPU
+		{D468B38E-357B-4B9F-9ADB-09FBF3AD20E7}.QA|Any CPU.Build.0 = Release|Any CPU
+		{D468B38E-357B-4B9F-9ADB-09FBF3AD20E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D468B38E-357B-4B9F-9ADB-09FBF3AD20E7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
