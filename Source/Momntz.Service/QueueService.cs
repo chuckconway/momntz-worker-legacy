@@ -7,6 +7,8 @@ using Momntz.Infrastructure.Instrumentation.Logging;
 using Momntz.Messaging;
 using Momntz.Service.Core;
 using Momntz.Service.Plugins.Logging;
+using Momntz.Service.Plugins.Media;
+using NHibernate;
 
 namespace Momntz.Service
 {
@@ -23,7 +25,7 @@ namespace Momntz.Service
             _injection = DependencyInjection();
             _plugins = new List<Plugin>
                 {
-                    //new Plugin { Queue = QueueConstants.MediaQueue, Saga = new MediaSaga(_injection.Get<IStorage>(), _injection.Get<ISettings>(), _injection.Get<ISessionFactory>())},
+                    new Plugin { Queue = QueueConstants.MediaQueue, Saga = new MediaSaga(_injection.Get<IStorage>(), _injection.Get<ISettings>(), _injection.Get<ISessionFactory>())},
                     new Plugin { Queue = QueueConstants.LoggingQueue, Saga = new LoggerSaga(_injection.Get<IStorage>(), _injection.Get<ApplicationSettings>())},
                 };
         }
