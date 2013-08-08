@@ -24,7 +24,7 @@ namespace Momntz.Service
             _plugins = new List<Plugin>
                 {
                     //new Plugin { Queue = QueueConstants.MediaQueue, Saga = new MediaSaga(_injection.Get<IStorage>(), _injection.Get<ISettings>(), _injection.Get<ISessionFactory>())},
-                    new Plugin { Queue = QueueConstants.LoggingQueue, Saga = new LoggerSaga(_injection.Get<IStorage>())},
+                    new Plugin { Queue = QueueConstants.LoggingQueue, Saga = new LoggerSaga(_injection.Get<IStorage>(), _injection.Get<ApplicationSettings>())},
                 };
         }
 

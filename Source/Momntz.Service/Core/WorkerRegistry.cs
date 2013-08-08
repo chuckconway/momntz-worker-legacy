@@ -32,9 +32,7 @@ namespace Momntz.Service.Core
                 .Ctor<string>("connectionString")
                 .Is(settings.ServiceBusEndpoint);
 
-            For<ILog>().Use<LogToFile>()
-                .Ctor<string>("fullFilePath")
-                .Is(settings.LogToFile);
+            For<ILog>().Use<Log>();
 
             For<IConfigurationService>().Use<MomntzConfiguration>();
             For<ISettings>().Use<Settings>();
