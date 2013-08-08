@@ -52,7 +52,7 @@
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Momntz.Worker\packages\Newtonsoft.Json.5.0.5\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\..\Momntz\Dependencies\ChuckConway\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NHibernate">
       <HintPath>..\Momntz.Worker.Core\bin\DEV\NHibernate.dll</HintPath>
@@ -60,6 +60,9 @@
     <Reference Include="PostSharp, Version=3.0.31.9, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\PostSharp.3.0.31\lib\net20\PostSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="RestSharp">
+      <HintPath>..\packages\RestSharp.104.1\lib\net4\RestSharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -71,6 +74,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Logging\LoggerSaga.cs" />
     <Compile Include="Media\MediaSaga.cs" />
     <Compile Include="Media\Types\Documents\DocumentProcessor.cs" />
     <Compile Include="Media\Types\Images\ExifData.cs" />

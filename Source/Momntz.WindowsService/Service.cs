@@ -1,12 +1,12 @@
 ﻿using System.ServiceProcess;
-using System.Timers;
+using System.Threading;
 using Momntz.Service;
 
 namespace Momntz.WindowsService
 {
     public partial class Service : ServiceBase
     {
-        readonly Timer _timer = new Timer(60000);
+        SingleThreadQueueService service = new SingleThreadQueueService(60000);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Service"/> class.
@@ -29,8 +29,7 @@ namespace Momntz.WindowsService
         /// <param name="args">Data passed by the start command.</param>
         protected override void OnStart(string[] args)
         {
-            _timer.Elapsed+= (s, e) => new QueueService().Process();
-            _timer.Start();
+            service.Start();
         }
 
         /// <summary>
@@ -38,7 +37,47 @@ namespace Momntz.WindowsService
         /// </summary>
         protected override void OnStop()
         {
-            _timer.Stop();
+            service.Stop();
+        }
+
+        public class SingleThreadQueueService
+        {
+            private readonly int _elaspeTime;
+            private volatile bool _stop;
+
+            /// <summary>
+            /// Initializes a new instance of the <see cref="SingleThreadQueueService"/> class.
+            /// </summary>
+            /// <param name="elaspeTime">The elaspe time.</param>
+            public SingleThreadQueueService(int elaspeTime)
+            {
+                _elaspeTime = elaspeTime;
+            }
+
+            /// <summary>
+            /// Starts this instance.
+            /// </summary>
+            public void Start()
+            {
+                var thread = new Thread(() =>
+                {
+                    while (!_stop)
+                    {
+                        new QueueService().Process();
+                        Thread.Sleep(_elaspeTime);
+                    }
+                });
+
+                thread.Start();
+            }
+
+            /// <summary>
+            /// Stops this instance.
+            /// </summary>
+            public void Stop()
+            {
+                _stop = true;
+            }
         }
     }
 }

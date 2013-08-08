@@ -9,7 +9,9 @@ using ChuckConway.Cloud.Storage;
 using ChuckConway.Images;
 using Momntz.Data.Schema;
 using Momntz.Infrastructure.Configuration;
+using Momntz.Infrastructure.Instrumentation.Logging;
 using Momntz.Messaging;
+using Newtonsoft.Json;
 using NHibernate;
 
 namespace Momntz.Service.Plugins.Media.Types.Images
@@ -48,6 +50,7 @@ namespace Momntz.Service.Plugins.Media.Types.Images
         /// </summary>
         /// <param name="imageFormat">The image format.</param>
         /// <returns>ImageFormat.</returns>
+        [Log]
         private static ImageFormat GetFormat(string imageFormat)
         {
             var item = _formats.SingleOrDefault(f => f.Extensions.Any(s => string.Equals(s, imageFormat.ToLower().Trim('.'), StringComparison.InvariantCulture)));
@@ -90,6 +93,7 @@ namespace Momntz.Service.Plugins.Media.Types.Images
         /// Processes the specified message.
         /// </summary>
         /// <param name="message">The message.</param>
+        [Log]
         public void Consume(Messaging.Models.Media message)
         {
             if (message != null)
@@ -145,8 +149,10 @@ namespace Momntz.Service.Plugins.Media.Types.Images
         /// </summary>
         /// <param name="bytes">The bytes.</param>
         /// <param name="format">The format.</param>
+        /// <param name="mediaMessage">The media message.</param>
         /// <param name="momento">The momento.</param>
         /// <returns>List{InParameters}.</returns>
+        [Log]
         private IEnumerable<InParameters> GetImageConfigurations(byte[] bytes, ImageFormat format, Messaging.Models.Media mediaMessage, Momento momento)
         {
             return new List<InParameters>
@@ -196,6 +202,7 @@ namespace Momntz.Service.Plugins.Media.Types.Images
         /// </summary>
         /// <param name="mediaMessage">The media message.</param>
         /// <returns>Momento.</returns>
+        [Log]
         private static Momento PopulateMomentoObject(Messaging.Models.Media mediaMessage)
         {
             var momento = new Momento
@@ -239,6 +246,7 @@ namespace Momntz.Service.Plugins.Media.Types.Images
         /// </summary>
         /// <param name="parameters">The parameters.</param>
         /// <returns>System.String.</returns>
+        [Log]
         private string SaveToStorage(InParameters parameters)
         {
             byte[] bytes = null;
@@ -263,6 +271,7 @@ namespace Momntz.Service.Plugins.Media.Types.Images
         /// <param name="name">The name.</param>
         /// <param name="extension">The extension.</param>
         /// <param name="bytes">The bytes.</param>
+        [Log]
         protected void AddToStorage(string storageContainer, string contentType, string name, string extension, byte[] bytes)
         {
             _storage.AddFile(storageContainer, name, string.Format("{0}/{1}", contentType, extension), bytes);
@@ -310,6 +319,7 @@ namespace Momntz.Service.Plugins.Media.Types.Images
             /// Gets or sets the bytes.
             /// </summary>
             /// <value>The bytes.</value>
+            [JsonIgnore]
             public byte[] Bytes { get; set; }
         }
 
