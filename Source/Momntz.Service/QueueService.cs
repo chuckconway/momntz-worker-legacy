@@ -25,7 +25,7 @@ namespace Momntz.Service
             _injection = DependencyInjection();
             _plugins = new List<Plugin>
                 {
-                    new Plugin { Queue = QueueConstants.MediaQueue, Saga = new MediaSaga(_injection.Get<IStorage>(), _injection.Get<ISettings>(), _injection.Get<ISessionFactory>())},
+                    new Plugin { Queue = QueueConstants.MediaQueue, Saga = new MediaSaga(_injection.Get<IStorage>(), _injection.Get<ISettings>(), _injection.Get<ISessionFactory>(), _injection.Get<ILog>())},
                     new Plugin { Queue = QueueConstants.LoggingQueue, Saga = new LoggerSaga(_injection.Get<IStorage>(), _injection.Get<ApplicationSettings>())},
                 };
         }
@@ -50,7 +50,6 @@ namespace Momntz.Service
             foreach (var plugin in _plugins)
             {
                 Plugin plugin2 = plugin;
-                //Task.Factory.StartNew(() => queue.ProcessAllMessages<string>(plugin2.Queue, s => plugin2.Saga.Consume(s)));
                 queue.ProcessAllMessages(plugin2.Queue, s => plugin2.Saga.Consume(s));
             }
         }
@@ -83,7 +82,7 @@ namespace Momntz.Service
         /// <summary>
         /// Class Plugin
         /// </summary>
-        private class Plugin
+        private class Plugin 
         {
             /// <summary>
             /// Gets or sets the queue.

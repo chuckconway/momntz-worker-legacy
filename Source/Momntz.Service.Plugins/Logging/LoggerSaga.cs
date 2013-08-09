@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Net;
 using System.Text;
 using ChuckConway.Cloud.Storage;
+using Microsoft.ServiceBus.Messaging;
 using Momntz.Infrastructure.Configuration;
 using Momntz.Infrastructure.Instrumentation.Logging;
 using Momntz.Infrastructure.Instrumentation.Logging.Models;
 using Momntz.Messaging;
-using Newtonsoft.Json;
 using RestSharp;
 
 namespace Momntz.Service.Plugins.Logging
@@ -27,27 +26,30 @@ namespace Momntz.Service.Plugins.Logging
         }
 
         public string Type { get { return "logging"; } }
-        public void Consume(string message)
+
+        /// <summary>
+        /// Consumes the specified message.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        public void Consume(BrokeredMessage message)
         {
             try
             {
-
-                var q = JsonConvert.DeserializeObject<QueueLogMessage>(message);
+                var msg = message.GetBody<QueueLogMessage>();
 
                 //Get message from storage account.
-                var rawBytes = _storage.GetFile(QueueConstants.LoggingQueue, q.Id.ToString());
+                var rawBytes = _storage.GetFile(QueueConstants.LoggingQueue, msg.Id.ToString());
                 var text = Encoding.Default.GetString(rawBytes);
 
                 //make a post to loggly with content.
                 var client = new RestClient();
-                RestRequest request = new RestRequest(q.Endpoint);
+                var request = new RestRequest(msg.Endpoint);
                 request.AddParameter("application/json", text, ParameterType.RequestBody);
                 request.Method = Method.POST;
-                var response = client.Execute(request);
-                var code = response.StatusCode;
-
+                 client.Execute(request);
+ 
                 //remove message from storage account.
-                _storage.DeleteFile(QueueConstants.LoggingQueue, q.Id.ToString());
+                _storage.DeleteFile(QueueConstants.LoggingQueue, msg.Id.ToString());
             }
             catch (Exception ex)
             {
