@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-
 using ChuckConway.Cloud.Storage;
+using Microsoft.ServiceBus.Messaging;
 using Momntz.Infrastructure.Configuration;
 using Momntz.Infrastructure.Instrumentation.Logging;
 using Momntz.Messaging;
@@ -10,12 +11,12 @@ using Momntz.Service.Plugins.Media.Types.Documents;
 using Momntz.Service.Plugins.Media.Types.Images;
 using Momntz.Service.Plugins.Media.Types.Videos;
 using NHibernate;
-using Newtonsoft.Json;
 
 namespace Momntz.Service.Plugins.Media
 {
     public class MediaSaga : ISaga
     {
+        private readonly ILog _log;
         private readonly List<MediaType> _processors;
 
         /// <summary>
@@ -23,8 +24,9 @@ namespace Momntz.Service.Plugins.Media
         /// </summary>
         /// <param name="storage">The storage.</param>
         /// <param name="settings">The settings.</param>
-        public MediaSaga(IStorage storage, ISettings settings, ISessionFactory factory)
+        public MediaSaga(IStorage storage, ISettings settings, ISessionFactory factory, ILog log)
         {
+            _log = log;
             _processors = GetProcessors(storage, settings, factory);
         }
 
@@ -50,19 +52,35 @@ namespace Momntz.Service.Plugins.Media
         /// </summary>
         /// <param name="message">The message.</param>
         /// <exception cref="System.NotImplementedException"></exception>
-        [Log]
-        public void Consume(string message)
+        public void Consume(BrokeredMessage message)
         {
-            var mediaMessage = JsonConvert.DeserializeObject<Messaging.Models.Media>(message);
-            var processor = _processors.First(m => m.Extensions.Contains(mediaMessage.Extension.ToLower()));
-            processor.MediaProcessor.Consume(mediaMessage);
+             // message as Messaging.Models.Media;
+            Messaging.Models.Media msg = null;
+
+            try
+            {
+                msg = message.GetBody<Messaging.Models.Media>();
+                var processor = _processors.First(m => m.Extensions.Contains(msg.Extension.ToLower()));
+                processor.MediaProcessor.Consume(msg);
+            }
+            catch (Exception ex)
+            {
+                string error = "MediaSaga exception ";
+
+                if (msg != null)
+                {
+                    error += msg.ToString();
+                }
+
+                _log.Exception(ex, error);
+            }
         }
 
         /// <summary>
         /// Gets the type. In Windows Azure Service Bus this is the same as a Subscription
         /// </summary>
         /// <value>The type.</value>
-        public string Type { get { return "media"; } }
+        public string Type { get { return QueueConstants.MediaQueue; } }
 
         private class MediaType
         {
